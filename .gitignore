@@ -13,6 +13,8 @@ datadir*
 *.test
 mcsschain
 mcsschain-cli
+paradatadir
+parawallet
 cmd/chain33/chain33
 cmd/tools/tools
 build/mcsschain
