@@ -11,8 +11,12 @@ datadir*
 .vscode
 *.pprof
 *.test
+mcsschain
+mcsschain-cli
 cmd/chain33/chain33
 cmd/tools/tools
+build/mcsschain
+build/mcsschain-cli
 build/cert.pem
 build/key.pem
 build/chain33*

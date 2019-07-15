@@ -1,6 +1,5 @@
 language: go
-go_import_path: github.com/33cn/chain33
-
+go_import_path: github.com/33cn/plugin
 os: linux
 dist: xenial
 
@@ -10,9 +9,7 @@ matrix:
   include:
     - name: check_fmt
       sudo: require
-      go:
-        - "1.11.x"
-        - master
+      go: "1.11.x"
       install:
         - go get -u golang.org/x/tools/cmd/goimports
         - go get -u gopkg.in/alecthomas/gometalinter.v2
@@ -31,8 +28,7 @@ matrix:
 
     - name: coverage
       if: branch = master
-      go:
-        - "1.9.x"
+      go: "1.9.x"
       before_install:
         - go get -t -v ./...
       install: skip
@@ -41,7 +37,15 @@ matrix:
       after_success:
         - bash <(curl -s https://codecov.io/bash)
 
+    - name: auto-test
+      go: "1.9.x"
+      install: skip
+      before_script: make build_ci
+      script:
+        - make autotest dapp=all
+
     - name: deploy
+      if: env(DAPP) IS present
       sudo: required
       services:
         - docker
@@ -56,8 +60,6 @@ matrix:
         - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
         - chmod +x docker-compose
         - sudo mv docker-compose /usr/local/bin
+      before_script: make build_ci
       script:
-        - make build_ci
-        - make autotest dapp=all
-        - make docker-compose && make docker-compose-down
-
+        - make docker-compose dapp=${DAPP} && make docker-compose-down dapp=${DAPP} && make clean
